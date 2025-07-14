@@ -1,7 +1,12 @@
 package com.learncicd.customermgmt.integration;
 
 import com.learncicd.customermgmt.domain.Customer;
+import com.learncicd.customermgmt.service.CustomerService;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +19,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Slf4j
 class CustomerIntegrationTest {
     @LocalServerPort
     private int port;
 
     private final RestTemplate restTemplate = new RestTemplate();
+
+    @Autowired
+    private CustomerService customerService ;
+
+    @BeforeEach
+    void setup() {
+        customerService.resetData();         // Clear data first
+        customerService.initData();          // Then add default data
+        log.info("setup() CUSTOMER INFO :: {}", customerService.getAllCustomers());
+    }
+
+    @AfterEach
+    void reset() {
+        customerService.resetData();
+        log.info("reset() CUSTOMER INFO :: {}", customerService.getAllCustomers());
+    }
 
     @Test
     void testGreetingIntegration() {
@@ -43,6 +65,6 @@ class CustomerIntegrationTest {
         Customer[] response = restTemplate.getForObject(url, Customer[].class);
         //assertEquals(2, Objects.requireNonNull(response.length)); // remove redundant null check
         assert response != null;
-        assertEquals(3, response.length);
+        assertEquals(2, response.length);
     }
 }
