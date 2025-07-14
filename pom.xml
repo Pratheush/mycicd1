@@ -75,6 +75,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>spring-customer-mgmt-cicd</finalName>
     </build>
 
 </project>
