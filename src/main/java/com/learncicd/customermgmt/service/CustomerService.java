@@ -19,6 +19,10 @@ public class CustomerService {
         customerList.add(new Customer("Jane", "Smith", 25, "9876543210"));
     }
 
+    public void resetData(){
+        customerList.clear();
+    }
+
     public List<Customer> getAllCustomers() {
         return customerList;
     }
