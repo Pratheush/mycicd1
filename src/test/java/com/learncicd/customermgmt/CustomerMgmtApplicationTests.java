@@ -3,6 +3,8 @@ package com.learncicd.customermgmt;
 import com.learncicd.customermgmt.domain.Customer;
 import com.learncicd.customermgmt.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,12 +33,28 @@ class CustomerMgmtApplicationTests {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private CustomerService customerService ;
+
+    @BeforeEach
+    void setup() {
+        customerService.resetData();         // Clear data first
+        customerService.initData();          // Then add default data
+        log.info("setup() CUSTOMER INFO :: {}", customerService.getAllCustomers());
+    }
+
+    @AfterEach
+    void reset() {
+        customerService.resetData();
+        log.info("reset() CUSTOMER INFO :: {}", customerService.getAllCustomers());
+    }
+
     @Test
     void testGetAllCustomersReturnsDefaultTwo() {
         ResponseEntity<Customer[]> response = restTemplate.getForEntity("/api/customers/list-customers", Customer[].class);
         log.info("Customer List : {}", Arrays.stream(Objects.requireNonNull(response.getBody())).toList());
         assertEquals(200, response.getStatusCode().value());
-        assertEquals(3, Objects.requireNonNull(response.getBody()).length);
+        assertEquals(2, Objects.requireNonNull(response.getBody()).length);
     }
 
     @Test
